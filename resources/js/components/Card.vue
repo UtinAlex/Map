@@ -7,14 +7,13 @@ export default {
   data() {
     return {
       map: null,
-      collectionGeoObjects: null,
-      placemark: null,
     };
   },
   props: ["card"],
 
   created() {
     // Установить скрипты для использования яндекс карты
+    // doc https://yandex.com/dev/jsapi-v2-1/doc/en/v2-1/dg/concepts/geoobjects#geoobject_collections
     let scriptYandexMap = document.createElement("script");
     scriptYandexMap.setAttribute(
       "src",
@@ -28,21 +27,20 @@ export default {
   methods: {
     initializeYandexMap() {
       ymaps.ready(() => {
-        this.map = new ymaps.Map("yandex-map", {
+        let map = new ymaps.Map("yandex-map", {
           center: [59.906641, 30.331462],
           zoom: 10,
           controls: ["fullscreenControl"],
           searchControlProvider: "yandex#search",
         });
-        //this.map.behaviors.disable('scrollZoom');
-        console.log(this.map);
-        this.setMarkers();
-        // this.coordinates.then(() => this.setMarkers());
+        
+        this.setMarkers(map);
+        
       });
     },
-    setMarkers() {
-      console.log(this.card.mapCoordinates[0]);
-      this.collectionGeoObjects = new ymaps.GeoObjectCollection(
+    setMarkers(map) {
+      
+      let collectionGeoObjects = new ymaps.GeoObjectCollection(
         {},
         {
           preset: "twirl#redIcon", //все метки красные
@@ -51,27 +49,18 @@ export default {
       );
 
       for (let i = 0; i < this.card.mapCoordinates[0].length; i++) {
-        console.log([
+
+        let placemark = new ymaps.Placemark([
           Number(this.card.mapCoordinates[0][i].latitude),
           Number(this.card.mapCoordinates[0][i].longitude),
         ]);
 
-        this.placemark = new ymaps.Placemark([
-          Number(this.card.mapCoordinates[0][i].latitude),
-          Number(this.card.mapCoordinates[0][i].longitude),
-        ]);
-        console.log(this.placemark);
-
-        this.collectionGeoObjects.add(this.placemark);
-        console.log(this.collectionGeoObjects);
+        collectionGeoObjects.add(placemark);
+        
       }
-      // let placemark2 = new ymaps.Placemark([
-      //   Number(this.card.mapCoordinates[0][2].latitude),
-      //   Number(this.card.mapCoordinates[0][2].longitude),
-      // ]);
-      this.map.geoObjects.add(this.collectionGeoObjects);
-      // this.map.geoObjects.add(placemark2);
-      // this.map.setBounds(this.collectionGeoObjects.getBounds());
+      
+      map.geoObjects.add(collectionGeoObjects);
+      
     },
   },
 };

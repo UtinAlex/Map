@@ -15,14 +15,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      map: null,
-      collectionGeoObjects: null,
-      placemark: null
+      map: null
     };
   },
   props: ["card"],
   created: function created() {
     // Установить скрипты для использования яндекс карты
+    // doc https://yandex.com/dev/jsapi-v2-1/doc/en/v2-1/dg/concepts/geoobjects#geoobject_collections
     var scriptYandexMap = document.createElement("script");
     scriptYandexMap.setAttribute("src", "https://api-maps.yandex.ru/2.1/?apikey=516c90cd-d4fe-4764-ace5-30e0fb75d745&lang=ru_RU");
     document.head.appendChild(scriptYandexMap);
@@ -34,40 +33,27 @@ __webpack_require__.r(__webpack_exports__);
     initializeYandexMap: function initializeYandexMap() {
       var _this = this;
       ymaps.ready(function () {
-        _this.map = new ymaps.Map("yandex-map", {
+        var map = new ymaps.Map("yandex-map", {
           center: [59.906641, 30.331462],
           zoom: 10,
           controls: ["fullscreenControl"],
           searchControlProvider: "yandex#search"
         });
-        //this.map.behaviors.disable('scrollZoom');
-        console.log(_this.map);
-        _this.setMarkers();
-        // this.coordinates.then(() => this.setMarkers());
+        _this.setMarkers(map);
       });
     },
-    setMarkers: function setMarkers() {
-      console.log(this.card.mapCoordinates[0]);
-      this.collectionGeoObjects = new ymaps.GeoObjectCollection({}, {
+    setMarkers: function setMarkers(map) {
+      var collectionGeoObjects = new ymaps.GeoObjectCollection({}, {
         preset: "twirl#redIcon",
         //все метки красные
         draggable: true // и их можно перемещать
       });
 
       for (var i = 0; i < this.card.mapCoordinates[0].length; i++) {
-        console.log([Number(this.card.mapCoordinates[0][i].latitude), Number(this.card.mapCoordinates[0][i].longitude)]);
-        this.placemark = new ymaps.Placemark([Number(this.card.mapCoordinates[0][i].latitude), Number(this.card.mapCoordinates[0][i].longitude)]);
-        console.log(this.placemark);
-        this.collectionGeoObjects.add(this.placemark);
-        console.log(this.collectionGeoObjects);
+        var placemark = new ymaps.Placemark([Number(this.card.mapCoordinates[0][i].latitude), Number(this.card.mapCoordinates[0][i].longitude)]);
+        collectionGeoObjects.add(placemark);
       }
-      // let placemark2 = new ymaps.Placemark([
-      //   Number(this.card.mapCoordinates[0][2].latitude),
-      //   Number(this.card.mapCoordinates[0][2].longitude),
-      // ]);
-      this.map.geoObjects.add(this.collectionGeoObjects);
-      // this.map.geoObjects.add(placemark2);
-      // this.map.setBounds(this.collectionGeoObjects.getBounds());
+      map.geoObjects.add(collectionGeoObjects);
     }
   }
 });
