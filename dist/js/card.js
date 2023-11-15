@@ -43,15 +43,28 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     setMarkers: function setMarkers(map) {
+      var _this2 = this;
       var collectionGeoObjects = new ymaps.GeoObjectCollection({}, {
         preset: "twirl#redIcon",
         //все метки красные
         draggable: true // и их можно перемещать
       });
-
-      for (var i = 0; i < this.card.mapCoordinates[0].length; i++) {
-        var placemark = new ymaps.Placemark([Number(this.card.mapCoordinates[0][i].latitude), Number(this.card.mapCoordinates[0][i].longitude)]);
+      var _loop = function _loop() {
+        var placemark = new ymaps.Placemark([Number(_this2.card.mapCoordinates[0][i].latitude), Number(_this2.card.mapCoordinates[0][i].longitude)], {}, {
+          preset: 'islands#blueIcon',
+          draggable: false
+        });
+        var baseUrl = window.location.href;
+        var slash = '/';
+        var id = _this2.card.mapCoordinates[0][i].id;
+        var url = baseUrl + slash + id;
+        placemark.events.add('click', function () {
+          window.location.href = url;
+        });
         collectionGeoObjects.add(placemark);
+      };
+      for (var i = 0; i < this.card.mapCoordinates[0].length; i++) {
+        _loop();
       }
       map.geoObjects.add(collectionGeoObjects);
     }

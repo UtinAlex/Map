@@ -53,7 +53,19 @@ export default {
         let placemark = new ymaps.Placemark([
           Number(this.card.mapCoordinates[0][i].latitude),
           Number(this.card.mapCoordinates[0][i].longitude),
-        ]);
+        ], {}, {
+          preset: 'islands#blueIcon',
+          draggable: false
+        });
+
+        let baseUrl = window.location.href;
+        let slash = '/';
+        let id = this.card.mapCoordinates[0][i].id;
+        let url = baseUrl + slash + id;
+
+        placemark.events.add('click', function () {
+            window.location.href = url;
+        });
 
         collectionGeoObjects.add(placemark);
         
